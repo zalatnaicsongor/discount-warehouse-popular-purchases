@@ -14,6 +14,7 @@ import hu.zalatnai.discountwarehouse.users.UserExistenceChecker;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service
 public class PopularPurchasesService {
@@ -34,6 +35,8 @@ public class PopularPurchasesService {
     }
 
     public List<ProductWithRecentPurchases> retrieveMostPopularRecentlyPurchasedProductsOfUser(String username) {
+        Assert.hasText(username);
+
         userExistenceChecker.checkIfUserExists(username);
         List<Integer> last5PurchasedProductIds = purchaseRepository.getNMostRecentByUsername(username, 5)
             .stream()
