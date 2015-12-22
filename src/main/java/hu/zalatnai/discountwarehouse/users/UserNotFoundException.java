@@ -1,4 +1,4 @@
-package hu.zalatnai.discountwarehouse.popularpurchases.purchases;
+package hu.zalatnai.discountwarehouse.users;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String username) {
