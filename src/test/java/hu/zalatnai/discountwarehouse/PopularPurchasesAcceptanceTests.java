@@ -23,7 +23,8 @@ public class PopularPurchasesAcceptanceTests {
     @Autowired
     private PopularPurchasesService popularPurchasesService;
 
-    public static String nonExistentUsername = "non_existent_username_qwe";
+    public static final String nonExistentUsername = "non_existent_username_qwe";
+    public static final String existingUsername = "Tom34";
 
     @Before public void configureRestAssured() {
         RestAssuredMockMvc.standaloneSetup(new PopularPurchasesController(popularPurchasesService));
@@ -45,6 +46,14 @@ public class PopularPurchasesAcceptanceTests {
         then().
             assertThat().content(equalTo("User with username of '"+nonExistentUsername+"' was not found")).
             statusCode(404);
+    }
+
+    @Test
+    public void returns2IfAnExistingUsernameIsSupplied() {
+        when().
+            get("/api/recent_purchases/" + existingUsername).
+            then().
+            statusCode(200);
     }
     //@formatter:on
 }
