@@ -2,6 +2,7 @@ package hu.zalatnai.discountwarehouse.products;
 
 import com.github.restdriver.clientdriver.ClientDriverRule;
 import hu.zalatnai.discountwarehouse.DiscountWarehouseApplication;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,5 +53,4 @@ public class PurchaseRepositoryIntegrationTest {
         purchaseRepository.getFiveMostRecentByUsername(username);
         purchaseRepository.getFiveMostRecentByUsername(username);
     }
-
 }
