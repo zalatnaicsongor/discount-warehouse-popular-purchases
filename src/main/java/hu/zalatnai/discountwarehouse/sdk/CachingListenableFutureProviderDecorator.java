@@ -21,6 +21,7 @@ public class CachingListenableFutureProviderDecorator<S, T> implements Listenabl
     private final ListenableFutureProvider<S, T> wrappedProvider;
     private final LoadingCache<S, ListenableFuture<T>> cache;
 
+    //todo: inject cache, maybe add configurable parameters.
     public CachingListenableFutureProviderDecorator(ListenableFutureProvider<S, T> wrappedProvider) {
         this.wrappedProvider = wrappedProvider;
         cache = Caffeine.newBuilder()

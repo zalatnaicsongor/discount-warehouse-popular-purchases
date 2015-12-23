@@ -1,7 +1,5 @@
 package hu.zalatnai.discountwarehouse.popularpurchases;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +36,7 @@ public class PopularPurchasesService {
         Assert.hasText(username);
 
         userExistenceChecker.checkIfUserExists(username);
-        List<Integer> last5PurchasedProductIds = purchaseRepository.getNMostRecentByUsername(username, 5)
+        List<Integer> last5PurchasedProductIds = purchaseRepository.getFiveMostRecentByUsername(username)
             .stream()
             .map(Purchase::getProductId).collect(Collectors.toList());
 
@@ -46,8 +44,10 @@ public class PopularPurchasesService {
             last5PurchasedProductIds
         );
 
+        products.forEach((productWithRecentPurchases -> productWithRecentPurchases.getRecent().remove(username)));
+
         Comparator<ProductWithRecentPurchases> productComparator =
-            (prod1, prod2) -> prod2.getRecent().length - prod1.getRecent().length;
+            (prod1, prod2) -> prod2.getNumOfRecentPurchases() - prod1.getNumOfRecentPurchases();
         productComparator = productComparator.thenComparing((prod1, prod2) -> prod1.getId() - prod2.getId());
         products.sort(productComparator);
 

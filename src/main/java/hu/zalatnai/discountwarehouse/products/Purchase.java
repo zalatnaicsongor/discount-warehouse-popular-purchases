@@ -1,6 +1,6 @@
 package hu.zalatnai.discountwarehouse.products;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -10,7 +10,7 @@ public class Purchase {
     private final int id;
     private final int productId;
     private final String username;
-    private final LocalDate date;
+    private final Instant date;
 
     @JsonCreator
     public Purchase(
@@ -22,7 +22,7 @@ public class Purchase {
         this.id = id;
         this.productId = productId;
         this.username = username;
-        this.date = LocalDate.parse(date);
+        this.date = Instant.parse(date);
     }
 
     public int getId() {
@@ -37,7 +37,7 @@ public class Purchase {
         return username;
     }
 
-    public LocalDate getDate() {
+    public Instant getDate() {
         return date;
     }
 

@@ -1,6 +1,8 @@
 package hu.zalatnai.discountwarehouse.popularpurchases;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import hu.zalatnai.discountwarehouse.products.ProductWithRecentPurchases;
@@ -40,23 +42,23 @@ public class PopularPurchasesServiceTest {
     private List<Integer> productIds = Arrays.asList(1, 2, 3, 4, 5);
 
     private ProductWithRecentPurchases productWithRecentPurchases1 = new ProductWithRecentPurchases(
-        1, ":)", 453, 234, new String[]{"a", "b"}
+        1, ":)", 453, 234, new HashSet<>(Arrays.asList("a", "b", existingUsername)), 3
     );
 
     private ProductWithRecentPurchases productWithRecentPurchases2 = new ProductWithRecentPurchases(
-        2, ":|", 234, 754, new String[]{"a"}
+        2, ":|", 234, 754, Collections.singleton("a"), 1
     );
 
     private ProductWithRecentPurchases productWithRecentPurchases3 = new ProductWithRecentPurchases(
-        3, ":/", 456, 135, new String[]{"a", "b", "c", "d", "e"}
+        3, ":/", 456, 135, new HashSet<>(Arrays.asList("a", "b", "c", "d", "e", existingUsername)), 11
     );
 
     private ProductWithRecentPurchases productWithRecentPurchases4 = new ProductWithRecentPurchases(
-        4, ":-", 123, 589, new String[]{"a", "b", "c"}
+        4, ":-", 123, 589, new HashSet<>(Arrays.asList("a", "b", "c", existingUsername)), 7
     );
 
     private ProductWithRecentPurchases productWithRecentPurchases5 = new ProductWithRecentPurchases(
-        5, ":_", 890, 128, new String[]{"a", "b", "c", "d"}
+        5, ":_", 890, 128, new HashSet<>(Arrays.asList("a", "b", "c", "d", existingUsername)), 9
     );
 
     @Before
@@ -65,13 +67,13 @@ public class PopularPurchasesServiceTest {
             .when(userExistenceChecker)
             .checkIfUserExists(nonExistentUsername);
 
-        when(purchaseRepository.getNMostRecentByUsername(existingUsername, 5)).thenReturn(
+        when(purchaseRepository.getFiveMostRecentByUsername(existingUsername)).thenReturn(
             Arrays.asList(
-                new Purchase(9, 1, "u", "2013-03-13"),
-                new Purchase(19, 2, "u", "2013-03-16"),
-                new Purchase(29, 3, "u", "2013-03-10"),
-                new Purchase(39, 4, "u", "2013-03-12"),
-                new Purchase(49, 5, "u", "2013-03-13")
+                new Purchase(9, 1, "u", "2013-03-13T12:48:21Z"),
+                new Purchase(19, 2, "u", "2013-03-16T12:48:21Z"),
+                new Purchase(29, 3, "u", "2013-03-10T12:48:21Z"),
+                new Purchase(39, 4, "u", "2013-03-12T12:48:21Z"),
+                new Purchase(49, 5, "u", "2013-03-13T12:48:21Z")
             )
         );
 
@@ -100,7 +102,7 @@ public class PopularPurchasesServiceTest {
     @Test
     public void getsTheFiveMostRecentPurchasesOfTheUser() {
         this.popularPurchasesService.retrieveMostPopularRecentlyPurchasedProductsOfUser(existingUsername);
-        verify(purchaseRepository).getNMostRecentByUsername(existingUsername, 5);
+        verify(purchaseRepository).getFiveMostRecentByUsername(existingUsername);
     }
 
     @Test
@@ -110,7 +112,17 @@ public class PopularPurchasesServiceTest {
     }
 
     @Test
-    public void returnsTheFiveMostRecentlyBoughtProductsOfTheUserSortedByTheNumberOfOtherUsersWhoBoughtTheSameProductInDescendingOrder() {
+    public void filtersTheUsersOwnUsernameFromTheListOfRecentBuyers() {
+        this.popularPurchasesService.retrieveMostPopularRecentlyPurchasedProductsOfUser(existingUsername);
+        assertThat(productWithRecentPurchases1.getRecent(), not(hasItem(existingUsername)));
+        assertThat(productWithRecentPurchases2.getRecent(), not(hasItem(existingUsername)));
+        assertThat(productWithRecentPurchases3.getRecent(), not(hasItem(existingUsername)));
+        assertThat(productWithRecentPurchases4.getRecent(), not(hasItem(existingUsername)));
+        assertThat(productWithRecentPurchases5.getRecent(), not(hasItem(existingUsername)));
+    }
+
+    @Test
+    public void returnsTheFiveMostRecentlyBoughtProductsOfTheUserSortedByTheNumberOfRecentPurchasesInDescendingOrder() {
         assertThat(
             this.popularPurchasesService.retrieveMostPopularRecentlyPurchasedProductsOfUser(existingUsername),
             contains(
