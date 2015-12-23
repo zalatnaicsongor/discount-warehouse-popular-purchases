@@ -13,7 +13,7 @@ The code is pretty self explanatory, but some notes:
 ## Implementation:
 
 * Checking if the user exists is a synchronous HTTP call, and so is the retrieval of the users five most recent purchases.
-* The retrieval of the product info + product purchases are done in an asynchronous way to speed up the processing (+ the requirement stated that the two requests have to be issued in the same time)
+* The retrieval of the product info + product purchases are done in an asynchronous way (using Apache HttpComponents AsyncClient and AsyncRestTemplate) to speed up the processing (+ the requirement stated that the two requests have to be issued in the same time)
 * Caching is done by the use of Caffeine, a Java8 caching library. There are no means to invalidate the cache entries for the time being because the remote API does not send any notice that the data has become stale. The TTL of a cache entry is 10 minutes.
 * The returned products are ordered by the number of other users who bought the same product, and not by the number of unique buyers.
 
