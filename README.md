@@ -21,5 +21,3 @@ The code is pretty self explanatory, but some notes:
 
 * Decouple the underlying cache instantiation from the caching decorators, and make the caches configurable (TTL, max size, etc.).
 * Provide means (for example an authenticated endpoint) to invalidate a cache entry.
-
-### If you have any questions, feel free to contact me.
